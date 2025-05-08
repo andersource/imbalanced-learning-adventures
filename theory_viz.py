@@ -15,8 +15,9 @@ def main():
         z = (1 - x ** p) ** (1 / p)
 
         fscore = 2 * beta * x / (beta * (x + z) + 1 - z)
+        balanced_accuracy = .5 * (x + z)
 
-        res.append(pd.DataFrame(dict(alpha=alpha, fscore=fscore, p=p)))
+        res.append(pd.DataFrame(dict(alpha=alpha, fscore=fscore, p=p, balanced_accuracy=balanced_accuracy)))
 
     df = pd.concat(res).reset_index(drop=True)
     df['p'] = df['p'].astype(str)
@@ -30,6 +31,16 @@ def main():
     plt.gca().get_legend().remove()
     plt.ylim((0, 1))
     plt.savefig('theoretic_scores.png', dpi=144)
+    plt.close()
+
+    plt.figure(figsize=(8, 5))
+    sns.set_style('darkgrid')
+    plot = sns.lineplot(data=df, x='alpha', y='balanced_accuracy', hue='p')
+    plot.set(xscale='log')
+    plt.xlabel('$ \\alpha $')
+    plt.ylabel('balanced accuracy')
+    plt.gca().get_legend().remove()
+    plt.savefig('theoretic_scores_balanced_accuracy.png', dpi=144)
     plt.close()
 
 
